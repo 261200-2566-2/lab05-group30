@@ -18,23 +18,32 @@ public class BaseCharacter implements Characters {
         stats = new int[8];
         accessoriesSlot = new Accessories[2];
         calculateStats(1);
-    }
-
-    private void calculateStats(int lv) {
-        stats[0] = lv; //level
-        stats[1] = (int)(baseStats[1] + (5 * stats[0])); //Hp
-        stats[2] = (int)(baseStats[2] + (0.5 * stats[0])); //Mp
-        stats[3] = (int)(baseStats[3] + (1.5 * stats[0])); //Atk
-        stats[4] = (int)(baseStats[4] + (0.2 * stats[0])); //MAtk
-        stats[5] = (int)(baseStats[5] + (0.5 * stats[0])); //Def
-        stats[6] = (int)(baseStats[6] + (0.2 * stats[0])); //MDef
-        stats[7] = baseStats[7]; //Spd
         cHp = stats[1];
         cMp = stats[2];
     }
 
+    private void calculateStats(int lv) {
+        int[] accessoryStats = new int[8];
+        for(Accessories a : accessoriesSlot) {
+            if(a != null) {
+                for(int i = 1; i < stats.length; i++) accessoryStats[i] += a.getStat()[i];
+            }
+        }
+
+        stats[0] = lv; //level
+        stats[1] = (int)(baseStats[1] + (5 * stats[0])) + accessoryStats[1]; //Hp
+        stats[2] = (int)(baseStats[2] + (0.5 * stats[0])) + accessoryStats[1]; //Mp
+        stats[3] = (int)(baseStats[3] + (1.5 * stats[0])) + accessoryStats[1]; //Atk
+        stats[4] = (int)(baseStats[4] + (0.2 * stats[0])) + accessoryStats[1]; //MAtk
+        stats[5] = (int)(baseStats[5] + (0.5 * stats[0])) + accessoryStats[1]; //Def
+        stats[6] = (int)(baseStats[6] + (0.2 * stats[0])) + accessoryStats[1]; //MDef
+        stats[7] = baseStats[7] + accessoryStats[1]; //Spd
+    }
+
     public void setLevel(int lv) {
         calculateStats(lv);
+        cHp = stats[1];
+        cMp = stats[2];
     }
 
     //temporary set stats for buff
@@ -121,12 +130,14 @@ public class BaseCharacter implements Characters {
             if(i.name().equals(type)) {
                 if(accessoriesSlot[i.ordinal()] != null) unEquip(i.ordinal()); //swap
                 accessoriesSlot[i.ordinal()] = item;
+                accessoriesSlot[i.ordinal()].setEquiper(this);
             }
         }
-        int[] stat = item.getStat();
-        for(int i = 1; i < stats.length; i++) {
-            this.stats[i] += stat[i];
-        }
+        // int[] stat = item.getStat();
+        // for(int i = 1; i < stats.length; i++) {
+        //     this.stats[i] += stat[i];
+        // }
+        calculateStats(stats[0]);
     }
 
     @Override
@@ -135,15 +146,18 @@ public class BaseCharacter implements Characters {
             System.out.println("Out of slot");
             return;
         }
-        int[] stat = accessoriesSlot[slot-1].getStat();
-        for(int i = 1; i < stats.length; i++) {
-            this.stats[i] -= stat[i];
-        }
+        // int[] stat = accessoriesSlot[slot-1].getStat();
+        // for(int i = 1; i < stats.length; i++) {
+        //     this.stats[i] -= stat[i];
+        // }
+        accessoriesSlot[slot-1].setEquiper(null);
         accessoriesSlot[slot-1] = null;
+        calculateStats(stats[0]);
     }
 
     @Override
     public void displayInfo() {
+        //calculateStats(stats[0]);
         System.out.println();
         System.out.println("Name : " + name);
         System.out.println("Level : " + stats[0]);
@@ -156,9 +170,14 @@ public class BaseCharacter implements Characters {
         System.out.println("SPD : " + stats[7]);
         System.out.print("Accessories : ");
         for (Accessories a : accessoriesSlot) {
-            if(a != null) System.out.print("[Lv. " + a.getStat()[0] + " " + a.getType() + "] ");
+            if(a != null) System.out.print("[Lv. " + a.getStat()[0] + " (" + a.getName() + ")] ");
             else System.out.print("[None] ");
         }
         System.out.println();
+    }
+
+    @Override
+    public void calculate() {
+        calculateStats(stats[0]);
     }
 }

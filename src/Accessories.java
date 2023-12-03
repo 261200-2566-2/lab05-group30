@@ -3,4 +3,6 @@ interface Accessories {
     void displayInfo();
     int[] getStat();
     String getType();
+    String getName();
+    public void setEquiper(Characters equiper);
 }

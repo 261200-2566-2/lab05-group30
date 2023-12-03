@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.Random;
 
 public class Ring implements Accessories {
@@ -6,53 +5,87 @@ public class Ring implements Accessories {
     private final String type;
     private int durability;
     private int upgraded;
+    private Characters equiper;
+    private String name;
 
-    public Ring(int[] baseStats) {
+    public Ring(String name, int[] baseStats) {
         this.stats = baseStats;
-        this.durability = 5;
         this.type = "Ring";
+        this.durability = 5;
         this.upgraded = 0;
+        this.name = name;
+    }
+
+    public int getUpgraded() {
+        return upgraded;
+    }
+
+    @Override
+    public void setEquiper(Characters equiper) {
+        this.equiper = equiper;
     }
 
     @Override
     public void upgrade() {
-
-        Random ran = new Random();
-        int random = ran.nextInt(99)+1;
-        if(random<= (int) 30-1.2*upgraded){
+        if(durability <= 0) {
+            System.out.println();
+            System.out.println("Durability is not enough");
+            return;
+        }
+        Random rand = new Random();
+        int randed = rand.nextInt(99) + 1;
+        int rng = (int)(80 * Math.pow(Math.exp(1), (-0.1 * upgraded)));
+        if(randed <= rng && rng > 0) {
             for (int i = 1; i < stats.length; i++) {
-                stats[i] += 2;
+                if(stats[i] > 0)stats[i] += 2;
             }
-            upgraded ++ ;
-        } else {durability -- ;}
+            upgraded++;
+            name = type + " +" + upgraded;
+            System.out.println();
+            System.out.println("+" + upgraded + " Upgrade Success!!!");
+            if(equiper != null) equiper.calculate();
+        }
+        else {
+            durability--;
+            System.out.println();
+            System.out.println("Upgrade Fail~");
+        }
     }
 
     @Override
     public void displayInfo() {
-       
+        String[] statsNames = {
+            "Level : ",
+            "HP : ",
+            "MP : ",
+            "ATK : ",
+            "MATK : ",
+            "DEF : ",
+            "MDEF : ",
+            "SPD : "
+        };
         System.out.println();
-        System.out.println("Name : " + type);
-        System.out.println("Level : " + stats[0]);
-        if (stats[1]>0)System.out.println("HP : " + stats[1]);
-        if (stats[2]>0)System.out.println("MP : "  + stats[2]);
-        if (stats[3]>0)System.out.println("ATK : " + stats[3]);
-        if (stats[4]>0)System.out.println("MATK : " + stats[4]);
-        if (stats[5]>0)System.out.println("DEF : " + stats[5]);
-        if (stats[6]>0)System.out.println("MDEF : " + stats[6]);
-        if (stats[7]>0)System.out.println("SPD : " + stats[7]);
+        System.out.println("Name : " + name);
+        for(int i = 0; i < stats.length; i++) {
+            if(stats[i] > 0) {
+                System.out.println(statsNames[i] + stats[i]);
+            }
+        }
         System.out.println("Durability : " + durability);
     }
 
     @Override
     public int[] getStat() {
-        
         return stats;
     }
 
     @Override
     public String getType() {
-       
         return type;
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
 }
