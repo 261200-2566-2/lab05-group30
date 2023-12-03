@@ -1,8 +1,8 @@
-public class Warrior extends BaseCharacter {
+public class Mage extends BaseCharacter{
     //int[] {lv, hp, mp, atk, mAtk, def, mDef, spd};
-    static int[] baseStats = new int[]{1, 100, 50, 20, 5, 10, 5, 5};
-    public Warrior(String name) {
-        super(name, "Warrior", baseStats);
+    static int[] baseStats = new int[]{1, 80, 100, 5, 20, 5, 15, 5};
+    public Mage(String name) {
+        super(name, "Mage", baseStats);
     }
     @Override
     public void useSkill(Characters target, int slot) {
