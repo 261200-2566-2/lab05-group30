@@ -1,6 +1,6 @@
-public interface Accessories {
-    public void upgrade();
-    public void displayInfo();
-    public int[] getStat();
-    public String getType();
+interface Accessories {
+    void upgrade();
+    void displayInfo();
+    int[] getStat();
+    String getType();
 }
